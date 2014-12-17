@@ -169,6 +169,21 @@ function get_games_html() {
 }
 
 
+function imageDeneme() {
+   
+   alert("image deneme");
+   
+   // $("#image_gamer_1 #image_pos_1").text('<img src="img/tri_full.png">');
+   // $("#image_gamer_1 #image_pos_1").prepend($('<img>',{id:'theImg',src:'img/tri_full.png'}));
+   
+   var img = document.createElement("IMG"); 
+   img.src = "img/tri_full.png"; 
+   $('#image_gamer_1 #image_pos_1').html(img);
+   
+   
+}
+
+
 // Validating Empty Field
 function check_empty() {
    if (document.getElementById('name').value == "" || document.getElementById('email').value == "" || document.getElementById('msg').value == "") {
