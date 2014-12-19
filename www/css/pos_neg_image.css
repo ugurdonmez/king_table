@@ -1,0 +1,49 @@
+@import "http://fonts.googleapis.com/css?family=Raleway";
+/*----------------------------------------------
+CSS settings for HTML div Exact Center
+------------------------------------------------*/
+
+#image_pos_1 {
+   width:50%;
+   float: left
+}
+
+#image_pos_2 {
+   width:50%;
+   float: left
+}
+
+#image_neg_1 {
+   width:45%;
+   float: left
+}
+
+#image_neg_2 {
+   width:10%;
+   float: left
+}
+
+#image_neg_3 {
+   width:41%;
+   float: right
+}
+
+#image_pos_1_inner {
+   float: right
+}
+
+#image_pos_2_inner {
+   float: left
+}
+
+#image_neg_1_inner {
+   float: right
+}
+
+#image_neg_1_inner {
+   
+}
+
+#image_neg_3_inner {
+   float: left
+}

@@ -178,7 +178,7 @@ function imageDeneme() {
    
    var img = document.createElement("IMG"); 
    img.src = "img/tri_full.png"; 
-   $('#image_gamer_1 #image_pos_1').html(img);
+   $('#image_gamer_1 #image_pos_1 #image_pos_1_inner').html(img);
    
    
 }
@@ -207,7 +207,7 @@ function div_hide(){
 }
 
 
-function start_hand() {
+function start_game() {
    
    //var n1 = new Gamer("ugur");
    
@@ -215,9 +215,14 @@ function start_hand() {
    
    var g = new Game();
    
-   alert(g.getHands().length);
-   
    $("#div_names").show();
+}
+
+function start_hand() {
+   
+   alert("strt");
+   
+   $("#div_games").show();
    
 }
 
@@ -238,7 +243,7 @@ function getNames() {
    $("#out_name_4").text(name_4);
    
    div_hide();
-   $("#start_hand").hide();
+   $("#start_game").hide();
 }
 
 function change() {
