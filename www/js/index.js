@@ -12,16 +12,19 @@ var name_4;
 
 var round = 0;
 
+var g;
+
+var gameNames = ["rifki", "kupa almaz", "erkek almaz", "el almaz", "kiz almaz", "son iki", "koz"];
 
 var gameType = {
    
-   KING : 1,
-   HEART : 2,
-   BOY : 3,
-   NO_HEART : 4,
-   GIRL : 5,
-   LAST_TWO : 6,
-   POSITIVE : 7
+   KING : 0,
+   HEART : 1,
+   BOY : 2,
+   NO_HAND : 3,
+   GIRL : 4,
+   LAST_TWO : 5,
+   POSITIVE : 6
    
 };
 
@@ -33,10 +36,15 @@ function Game() {
    this.gamers = [];
    this.hands = [];
    this.round = 0;
+   this.gameTypes = [0,0,0,0,0,0,0];
    
    var i;
    for ( i = 0 ; i < 20 ; i++ ) {
       this.hands.push(new Hand());
+   }
+   
+   this.getGamer = function(id) {
+      return this.gamers[id];
    }
    
    this.getHands = function() {
@@ -63,6 +71,30 @@ function Game() {
    this.incrementRound = function() {
       this.round += 1;
    };
+   
+   this.getAvailableGames = function() {
+      
+      var r = [0,0,0,0,0,0,0];
+      
+      var gamer = this.gamers[this.round % 4];
+      var pos = gamer.getPositiveHandNo();
+      var neg = gamer.getNegativeHandNo();
+      
+      var i;
+      
+      if ( neg != 3 ) {
+         for (i = 0 ; i < 6 ; i++ ) {
+            if ( this.gameTypes[i] != 2 ) {
+               r[i] = 1;
+            }
+         }
+      }
+      if (pos != 2 ) {
+         r[6] = 1;
+      }
+      
+      return r;
+   }
    
 }
 
@@ -154,18 +186,23 @@ function Hand() {
 
 
 
-
-
-
-// TODO: continue here
 function get_games_html() {
    
-   var str = "<div id='game' ";
+   var games = g.getAvailableGames();
    
-   if ( king != 2 ) {
-      //str += 
+   var r = "";
+   
+   var i;
+   
+   for ( i = 0 ; i < 7 ; i ++ ) {
+      if (games[i] = 1) {
+         r = r + " <input type='radio' name='game_select_radio' value= '" + i + "'> " + gameNames[i] + "<br>";
+      }
    }
    
+   r = r + "<button onclick='hand_selected()'>Sec</button>";
+   
+   return r;
 }
 
 
@@ -179,8 +216,6 @@ function imageDeneme() {
    var img = document.createElement("IMG"); 
    img.src = "img/tri_full.png"; 
    $('#image_gamer_1 #image_pos_1 #image_pos_1_inner').html(img);
-   
-   
 }
 
 
@@ -209,45 +244,51 @@ function div_hide(){
 
 function start_game() {
    
-   //var n1 = new Gamer("ugur");
-   
-   //alert(n1.get_name());
-   
-   var g = new Game();
+   g = new Game();
    
    $("#div_names").show();
 }
 
+function hand_selected() {
+   
+   var selected_hand = $('input[name="game_select_radio"]:checked').val();
+     
+   $("#div_games").hide();
+   
+   alert(selected_hand);
+   
+   
+}
+
 function start_hand() {
    
-   alert("strt");
+   $("#popupGames").html(get_games_html());
    
    $("#div_games").show();
    
 }
 
 function getNames() {
-   
-   change();
-   
-   name_1 = $("#inp_name_1").val();
-   $("#out_name_1").text(name_1);
       
+   name_1 = $("#inp_name_1").val();
    name_2 = $("#inp_name_2").val();
-   $("#out_name_2").text(name_2);
-   
    name_3 = $("#inp_name_3").val();
-   $("#out_name_3").text(name_3);
-   
    name_4 = $("#inp_name_4").val();
-   $("#out_name_4").text(name_4);
    
+   var array = [];
+   array.push(name_1);
+   array.push(name_2);
+   array.push(name_3);
+   array.push(name_4);
+   
+   g.initNames(array);
+   
+   $("#out_name_1").text(g.getGamer(0).getName());
+   $("#out_name_2").text(g.getGamer(1).getName());
+   $("#out_name_3").text(g.getGamer(2).getName());
+   $("#out_name_4").text(g.getGamer(3).getName());
+      
    div_hide();
    $("#start_game").hide();
-}
-
-function change() {
-   
-   $("#goodluck").text( "good luck" );;
    
 }
