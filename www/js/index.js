@@ -257,6 +257,8 @@ function hand_selected() {
    
    alert(selected_hand);
    
+   $("#div_hands").show();
+   
    
 }
 
