@@ -15,6 +15,8 @@ var round = 0;
 var g;
 
 var gameNames = ["rifki", "kupa almaz", "erkek almaz", "el almaz", "kiz almaz", "son iki", "koz"];
+var gamePoints = [ -320, -30, -60, -50, -100, -180, 50];
+var gameSize = [1,13,8,13,4,2,13];
 
 var gameType = {
    
@@ -36,12 +38,36 @@ function Game() {
    this.gamers = [];
    this.hands = [];
    this.round = 0;
+   this.selectedHand;
+   this.handEnteredValue;
    this.gameTypes = [0,0,0,0,0,0,0];
    
+   this.setHand = function (hand) {
+      this.hands.push(hand);
+   };
+   
+   /*
    var i;
    for ( i = 0 ; i < 20 ; i++ ) {
       this.hands.push(new Hand());
    }
+   */
+   
+   this.getHandEnteredValue = function() {
+      return this.handEnteredValue;
+   };
+   
+   this.setHandEnteredValue = function (value) {
+      this.handEnteredValue = value;
+   };
+   
+   this.getSelectedHand = function() {
+      return this.selectedHand;
+   };
+   
+   this.setSelectedHand = function(selectedHand) {
+      this.selectedHand = selectedHand;
+   };
    
    this.getGamer = function(id) {
       return this.gamers[id];
@@ -154,6 +180,11 @@ function Hand() {
    this.gamer;
    this.type;
    this.round;
+   this.punish[0,0,0,0];
+   
+   this.addPunish = function(id, size) {
+      this.punish[id] = size;
+   };
    
    this.setGamer = function (gamer) {
       this.gamer = gamer;
@@ -242,6 +273,112 @@ function div_hide(){
 }
 
 
+function finalizeHand() {
+   
+   var selected_hand = g.getSelectedHand();
+   var entered_value = g.getHandEnteredValue();
+   
+   if ( entered_value != gameSize[selected_hand] ) {
+      return;
+   }
+   
+   var h1 = parseInt($("#punish_1").val());
+   var h2 = parseInt($("#punish_2").val());
+   var h3 = parseInt($("#punish_3").val());
+   var h4 = parseInt($("#punish_4").val());
+   
+   var hand = new Hand();
+   
+   hand.addPunish(0,h1);
+   hand.addPunish(1,h2);
+   hand.addPunish(2,h3);
+   hand.addPunish(3,h4);
+   
+   hand.setGamer( g.getGamer(g.getRound() % 4) );
+   hand.setRound( g.getRound() );
+   hand.setType( g.getSelectedHand() );
+   
+   g.setHand(hand);
+   
+   // update gamers
+   g.getGamer(0).addPoint(  h1 * gamePoints[selected_hand]);
+   g.getGamer(1).addPoint(  h2 * gamePoints[selected_hand]);
+   g.getGamer(2).addPoint(  h3 * gamePoints[selected_hand]);
+   g.getGamer(3).addPoint(  h4 * gamePoints[selected_hand]);
+   
+   // TODO
+   // update table
+   
+   
+   
+   
+}
+
+function inc_dec(type, gamer) {
+   
+   var selected_hand = g.getSelectedHand();
+
+   var h1 = parseInt($("#punish_1").val());
+   var h2 = parseInt($("#punish_2").val());
+   var h3 = parseInt($("#punish_3").val());
+   var h4 = parseInt($("#punish_4").val());
+   
+   var total = h1+h2+h3+h4;
+   
+   // decrease
+   if ( type == 1 ) {
+      if ( gamer == 1 ) {
+         if ( h1 > 0 ) {
+            $("#punish_1").val(h1-1);
+            total -= 1;
+         }
+      }
+      else if ( gamer == 2 ) {
+         if ( h2 > 0 ) {
+            $("#punish_2").val(h2-1);
+            total -= 1;
+         }
+      }
+      else if ( gamer == 3 ) {
+         if ( h3 > 0 ) {
+            $("#punish_3").val(h3-1);
+            total -= 1;
+         }
+      }
+      else if ( gamer == 4 ) {
+         if ( h4 > 0 ) {
+            $("#punish_4").val(h4-1);
+            total -= 1;
+         }
+      }
+   }
+   else {
+      if ( total < gameSize[selected_hand] ) {
+         if ( gamer == 1 ) {
+            alert("inc 1");
+            $("#punish_1").val(h1+1);
+            total += 1;
+         }
+         else if ( gamer == 2 ) {
+            $("#punish_2").val(h2+1);
+            total += 1;
+         }
+         else if ( gamer == 3 ) {
+            $("#punish_3").val(h3+1);
+            total += 1;
+         }
+         else if ( gamer == 4 ) {
+            $("#punish_4").val(h4+1);
+            total += 1;
+         }
+      }
+   }
+   
+   g.setHandEnteredValue(total);
+   
+}
+
+
 function start_game() {
    
    g = new Game();
@@ -255,11 +392,17 @@ function hand_selected() {
      
    $("#div_games").hide();
    
-   alert(selected_hand);
+   g.setSelectedHand(selected_hand);
+   
+   // update gamer
+   if ( parseInt(selected_hand) == 6 ) {
+      g.getGamer(g.getRound() % 4 ).increasePositive();
+   }
+   else {
+      g.getGamer(g.getRound() % 4 ).increaseNegative();
+   }
    
    $("#div_hands").show();
-   
-   
 }
 
 function start_hand() {
