@@ -42,7 +42,7 @@ function Game() {
    this.handEnteredValue;
    this.gameTypes = [0,0,0,0,0,0,0];
    
-   this.setHand = function (hand) {
+   this.addHand = function (hand) {
       this.hands.push(hand);
    };
    
@@ -70,7 +70,7 @@ function Game() {
    };
    
    this.getGamer = function(id) {
-      return this.gamers[id];
+      return this.gamers[id % 4];
    }
    
    this.getHands = function() {
@@ -180,7 +180,7 @@ function Hand() {
    this.gamer;
    this.type;
    this.round;
-   this.punish[0,0,0,0];
+   this.punish = [0,0,0,0];
    
    this.addPunish = function(id, size) {
       this.punish[id] = size;
@@ -275,6 +275,8 @@ function div_hide(){
 
 function finalizeHand() {
    
+   $("#div_hands").hide();
+   
    var selected_hand = g.getSelectedHand();
    var entered_value = g.getHandEnteredValue();
    
@@ -298,7 +300,7 @@ function finalizeHand() {
    hand.setRound( g.getRound() );
    hand.setType( g.getSelectedHand() );
    
-   g.setHand(hand);
+   g.addHand(hand);
    
    // update gamers
    g.getGamer(0).addPoint(  h1 * gamePoints[selected_hand]);
@@ -308,6 +310,9 @@ function finalizeHand() {
    
    // TODO
    // update table
+   
+   
+   
    
    
    
