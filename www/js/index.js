@@ -1,17 +1,3 @@
-var king = 0;
-var heart = 0;
-var boy = 0;
-var no_hand = 0;
-var girl = 0;
-var last_two = 0;
-
-var name_1;
-var name_2;
-var name_3;
-var name_4;
-
-var round = 0;
-
 var g;
 
 var gameNames = ["rifki", "kupa almaz", "erkek almaz", "el almaz", "kiz almaz", "son iki", "koz"];
@@ -40,18 +26,41 @@ function Game() {
    this.round = 0;
    this.selectedHand;
    this.handEnteredValue;
+   this.positiveRound = 0;
+   this.negativeRound = 0;
    this.gameTypes = [0,0,0,0,0,0,0];
    
    this.addHand = function (hand) {
       this.hands.push(hand);
    };
    
-   /*
-   var i;
-   for ( i = 0 ; i < 20 ; i++ ) {
-      this.hands.push(new Hand());
-   }
-   */
+   this.incrementGameTypes = function(id) {
+      this.gameTypes[id]++;
+   };
+   
+   this.getPositiveRound = function() {
+      return this.positiveRound;
+   };
+   
+   this.setPositiveRound = function(value) {
+      this.positiveRound = value;
+   };
+   
+   this.incrementPositiveRound = function() {
+      this.positiveRound += 1;
+   };
+   
+   this.getNegativeRound = function() {
+      return this.negativeRound;
+   };
+   
+   this.setNegativeRound = function(value) {
+      this.negativeRound = value;
+   };
+   
+   this.incrementNegativeRound = function() {
+      this.negativeRound += 1;
+   };
    
    this.getHandEnteredValue = function() {
       return this.handEnteredValue;
@@ -102,7 +111,7 @@ function Game() {
       
       var r = [0,0,0,0,0,0,0];
       
-      var gamer = this.gamers[this.round % 4];
+      var gamer = this.gamers[ this.round % 4  ];
       var pos = gamer.getPositiveHandNo();
       var neg = gamer.getNegativeHandNo();
       
@@ -118,7 +127,7 @@ function Game() {
       if (pos != 2 ) {
          r[6] = 1;
       }
-      
+            
       return r;
    }
    
@@ -226,7 +235,7 @@ function get_games_html() {
    var i;
    
    for ( i = 0 ; i < 7 ; i ++ ) {
-      if (games[i] = 1) {
+      if (games[i] == 1) {
          r = r + " <input type='radio' name='game_select_radio' value= '" + i + "'> " + gameNames[i] + "<br>";
       }
    }
@@ -238,9 +247,7 @@ function get_games_html() {
 
 
 function imageDeneme() {
-   
-   alert("image deneme");
-   
+      
    // $("#image_gamer_1 #image_pos_1").text('<img src="img/tri_full.png">');
    // $("#image_gamer_1 #image_pos_1").prepend($('<img>',{id:'theImg',src:'img/tri_full.png'}));
    
@@ -296,24 +303,57 @@ function finalizeHand() {
    hand.addPunish(2,h3);
    hand.addPunish(3,h4);
    
-   hand.setGamer( g.getGamer(g.getRound() % 4) );
+   hand.setGamer( g.getGamer(g.getRound() - 1 ) );
    hand.setRound( g.getRound() );
    hand.setType( g.getSelectedHand() );
    
    g.addHand(hand);
-   
+
    // update gamers
    g.getGamer(0).addPoint(  h1 * gamePoints[selected_hand]);
    g.getGamer(1).addPoint(  h2 * gamePoints[selected_hand]);
    g.getGamer(2).addPoint(  h3 * gamePoints[selected_hand]);
-   g.getGamer(3).addPoint(  h4 * gamePoints[selected_hand]);
-   
-   // TODO
-   // update table
+   g.getGamer(3).addPoint(  h4 * gamePoints[selected_hand]);   
    
    
+   var r_index = g.getRound() % 4;
+   if ( r_index == 0 ) {
+      r_index = 4;
+   }
    
    
+   
+   // negative hand
+   if ( selected_hand != 6 ) {
+      var neg_index = g.getGamer(g.getRound() -1 ).getNegativeHandNo();
+      var img = document.createElement("IMG"); 
+      img.src = "img/circle_full.png"; 
+      $('#image_gamer_'+ r_index +' #image_neg_'+neg_index+' #image_neg_'+neg_index+'_inner').html(img);
+      
+      var index = g.getNegativeRound();
+      var str = '#neg_'+ index +'_gamename';
+      $(str).text(gameNames[selected_hand]);
+      $("#neg_"+index+"_gamer_1").text(h1 * gamePoints[selected_hand]);
+      $("#neg_"+index+"_gamer_2").text(h2 * gamePoints[selected_hand]);
+      $("#neg_"+index+"_gamer_3").text(h3 * gamePoints[selected_hand]);
+      $("#neg_"+index+"_gamer_4").text(h4 * gamePoints[selected_hand]);
+   }
+   else {
+      var pos_index = g.getGamer(g.getRound() -1 ).getPositiveHandNo();
+      var img = document.createElement("IMG"); 
+      img.src = "img/tri_full.png"; 
+      $('#image_gamer_'+ r_index +' #image_pos_'+pos_index+' #image_pos_'+pos_index+'_inner').html(img);
+      
+      var index = g.getPositiveRound();
+      $("#pos_"+index+"_gamer_1").text(h1 * gamePoints[selected_hand]);
+      $("#pos_"+index+"_gamer_2").text(h2 * gamePoints[selected_hand]);
+      $("#pos_"+index+"_gamer_3").text(h3 * gamePoints[selected_hand]);
+      $("#pos_"+index+"_gamer_4").text(h4 * gamePoints[selected_hand]);
+   }
+   
+   
+   
+   // control game is finished or not
    
    
    
@@ -322,7 +362,7 @@ function finalizeHand() {
 function inc_dec(type, gamer) {
    
    var selected_hand = g.getSelectedHand();
-
+   
    var h1 = parseInt($("#punish_1").val());
    var h2 = parseInt($("#punish_2").val());
    var h3 = parseInt($("#punish_3").val());
@@ -360,7 +400,6 @@ function inc_dec(type, gamer) {
    else {
       if ( total < gameSize[selected_hand] ) {
          if ( gamer == 1 ) {
-            alert("inc 1");
             $("#punish_1").val(h1+1);
             total += 1;
          }
@@ -399,13 +438,26 @@ function hand_selected() {
    
    g.setSelectedHand(selected_hand);
    
+   g.incrementGameTypes(selected_hand);
+   
+   
+   g.incrementRound();
    // update gamer
    if ( parseInt(selected_hand) == 6 ) {
-      g.getGamer(g.getRound() % 4 ).increasePositive();
+      g.getGamer(g.getRound() - 1).increasePositive();
+      g.incrementPositiveRound();
    }
    else {
-      g.getGamer(g.getRound() % 4 ).increaseNegative();
+      g.getGamer(g.getRound() - 1).increaseNegative();
+      g.incrementNegativeRound();
    }
+   
+   
+   
+   $("#punish_1").val(0);
+   $("#punish_2").val(0);
+   $("#punish_3").val(0);
+   $("#punish_4").val(0);
    
    $("#div_hands").show();
 }
